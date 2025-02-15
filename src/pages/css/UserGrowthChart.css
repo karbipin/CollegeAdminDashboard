@@ -1,0 +1,12 @@
+.chart-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #2f2f36;
+    border-radius: 8px;
+  }
+  
+  .chart-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
