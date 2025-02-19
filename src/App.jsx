@@ -13,6 +13,7 @@ import Login from './Login';
 import AdmissionsTable from './pages/AdmissionsTable';
 import Skill from './pages/Skill';
 
+
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);

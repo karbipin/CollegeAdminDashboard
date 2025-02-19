@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styles from "./css/Settings.module.css"; // Import CSS module
 
 function Settings() {
   const [view, setView] = useState("manage");
@@ -6,14 +7,11 @@ function Settings() {
   const [currentExam, setCurrentExam] = useState(null);
 
   const handleNavigation = (view) => setView(view);
-
   const handleDelete = (id) => setExams(exams.filter((exam) => exam.id !== id));
-
   const handleEdit = (id) => {
     setCurrentExam(exams.find((exam) => exam.id === id));
     setView("add");
   };
-
   const handlePublish = (id) => alert(`Exam ID ${id} published!`);
 
   const handleAddOrUpdateExam = (examData) => {
@@ -27,11 +25,11 @@ function Settings() {
   };
 
   return (
-    <main className="main-container">
+    <main className={styles.mainContainer}>
       <h3>Exam Page</h3>
 
       {/* Navigation Bar */}
-      <div className="nav-bar">
+      <div className={styles.navBar}>
         <button onClick={() => handleNavigation("manage")}>Manage Exam</button>
         <button onClick={() => handleNavigation("add")}>Add Exam</button>
         <button onClick={() => handleNavigation("recent")}>Recent Exams</button>
@@ -41,12 +39,12 @@ function Settings() {
       {view === "manage" && (
         <div>
           <h4>Manage Exams</h4>
-          <table className="exam-table">
+          <table className={styles.examTable}>
             <thead>
               <tr>
                 <th>SN</th>
                 <th>Exam Name</th>
-                <th>Edit Exam</th>
+                <th>Actions</th>
                 <th>Date (From)</th>
                 <th>Date (To)</th>
                 <th>Routine</th>
@@ -59,12 +57,12 @@ function Settings() {
                     <td>{index + 1}</td>
                     <td>{exam.name}</td>
                     <td>
-                      <button onClick={() => handlePublish(exam.id)}>Publish</button>
-                      <button onClick={() => handleEdit(exam.id)}>Edit</button>
-                      <button onClick={() => handleDelete(exam.id)}>Delete</button>
+                      <button className={styles.publishBtn} onClick={() => handlePublish(exam.id)}>Publish</button>
+                      <button className={styles.editBtn} onClick={() => handleEdit(exam.id)}>Edit</button>
+                      <button className={styles.deleteBtn} onClick={() => handleDelete(exam.id)}>Delete</button>
                     </td>
                     <td>{exam.dateFrom}</td>
-                    <td> {exam.dateTo}</td>
+                    <td>{exam.dateTo}</td>
                     <td>
                       {exam.routine ? (
                         <img src={exam.routine} alt="Routine" width="50" height="50" />
@@ -88,7 +86,7 @@ function Settings() {
       {view === "add" && (
         <div>
           <h4>{currentExam ? "Edit Exam" : "Add New Exam"}</h4>
-          <form
+          <form className={styles.form}
             onSubmit={(e) => {
               e.preventDefault();
               const examData = {
@@ -114,7 +112,9 @@ function Settings() {
             <label>Exam Routine (Upload Image):</label>
             <input type="file" name="routine" accept="image/*" />
 
-            <button type="submit">{currentExam ? "Update Exam" : "Add Exam"}</button>
+            <button className={styles.submitBtn} type="submit">
+              {currentExam ? "Update Exam" : "Add Exam"}
+            </button>
           </form>
         </div>
       )}
@@ -123,7 +123,7 @@ function Settings() {
       {view === "recent" && (
         <div>
           <h4>Recent Exams</h4>
-          <table className="exam-table">
+          <table className={styles.examTable}>
             <thead>
               <tr>
                 <th>SN</th>

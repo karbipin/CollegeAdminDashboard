@@ -1,0 +1,123 @@
+/* Container for login form */
+.login-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  /* Heading */
+  h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  /* Form */
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Input Container */
+  .inputContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  /* Icons inside input */
+  .icon {
+    position: absolute;
+    left: 10px;
+    font-size: 18px;
+    color: #888;
+  }
+  
+  /* Input fields */
+  .inputContainer input {
+    width: 100%;
+    padding: 10px 10px 10px 35px; /* Left padding for icon */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  .inputContainer input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* Login Button */
+  .btn {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  /* ✅ Responsive Design using Media Queries */
+  
+  /* Smaller devices (phones) */
+  @media (max-width: 480px) {
+    .login-container {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .inputContainer input {
+      font-size: 14px;
+      padding: 8px 8px 8px 30px;
+    }
+  
+    .icon {
+      font-size: 16px;
+    }
+  
+    .btn {
+      font-size: 14px;
+      padding: 8px;
+    }
+  }
+  
+  /* Tablets and small screens */
+  @media (max-width: 768px) {
+    .login-container {
+      max-width: 400px;
+    }
+  
+    .inputContainer input {
+      font-size: 15px;
+      padding: 10px 10px 10px 35px;
+    }
+  
+    .icon {
+      font-size: 18px;
+    }
+  
+    .btn {
+      font-size: 15px;
+    }
+  }
+  
+  /* Large screens (desktop) */
+  @media (min-width: 1024px) {
+    .login-container {
+      max-width: 400px;
+    }
+  }
+  

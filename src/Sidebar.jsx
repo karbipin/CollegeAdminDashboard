@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { BsCart3, BsGrid1X2Fill, BsFillArchiveFill, BsFillGrid3X3GapFill, BsPeopleFill, BsFillGearFill } from 'react-icons/bs';
 import { AiFillCopy } from "react-icons/ai";
-import { HiAcademicCap, HiClipboardList } from "react-icons/hi";
+import { HiAcademicCap, HiClipboardList, HiCubeTransparent, HiSun } from "react-icons/hi";
 
 function Sidebar({ openSidebarToggle, OpenSidebar }) {
   return (
@@ -51,14 +51,15 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
         </li>
         <li className='sidebar-list-item'>
           <NavLink to="/AdmissionsTable" activeClassName="active">
-            <AiFillCopy className='icon' /> Admissions
+            <HiSun className='icon' /> Admissions
           </NavLink>
         </li>
         <li className='sidebar-list-item'>
           <NavLink to="/Skill" activeClassName="active">
-            <AiFillCopy className='icon' /> Skill
+            <HiCubeTransparent className='icon' /> Skill
           </NavLink>
         </li>
+
 
 
       </ul>
