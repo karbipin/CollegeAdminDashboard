@@ -1,0 +1,191 @@
+/* General Styling */
+.mainContainer {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  /* Navigation Bar */
+  .navBar {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .navBar button {
+    margin-left: 10px;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+  }
+  
+  .navBar button:hover {
+    background: #0056b3;
+  }
+  
+  /* Table Styling */
+  .examTable {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .examTable th, .examTable td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .examTable th {
+    background: #007bff;
+    color: white;
+  }
+  
+  /* Form */
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form input, .form button {
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  /* Buttons */
+  .publishBtn {
+    background: green;
+    color: white;
+    border: none;
+    padding: 8px;
+    margin: 3px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .editBtn {
+    background: orange;
+    color: white;
+    border: none;
+    padding: 8px;
+    margin: 3px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .deleteBtn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px;
+    margin: 3px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .submitBtn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  /* Responsive Design */
+  
+  /* ✅ For screens up to 1024px (Tablets & Small Laptops) */
+  @media (max-width: 1024px) {
+    .mainContainer {
+      max-width: 90%;
+      padding: 15px;
+    }
+  
+    .navBar {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .navBar button {
+      width: 80%;
+      font-size: 14px;
+    }
+  
+    .examTable th, .examTable td {
+      padding: 8px;
+      font-size: 14px;
+    }
+  
+    .form input {
+      font-size: 14px;
+    }
+  
+    .submitBtn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  }
+  
+  /* ✅ For screens up to 768px (Tablets & Large Phones) */
+  @media (max-width: 768px) {
+    .mainContainer {
+      padding: 10px;
+    }
+  
+    .examTable th, .examTable td {
+      padding: 6px;
+      font-size: 13px;
+    }
+  
+    .form input {
+      font-size: 13px;
+      padding: 8px;
+    }
+  
+    .submitBtn {
+      font-size: 13px;
+      padding: 8px;
+    }
+  
+    .publishBtn, .editBtn, .deleteBtn {
+      padding: 6px;
+      font-size: 13px;
+    }
+  }
+  
+  /* ✅ Extra Small Devices (Phones - Up to 480px) */
+  @media (max-width: 480px) {
+    .mainContainer {
+      padding: 5px;
+    }
+  
+    .navBar {
+      gap: 5px;
+    }
+  
+    .examTable th, .examTable td {
+      padding: 5px;
+      font-size: 12px;
+    }
+  
+    .form input {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    .submitBtn {
+      font-size: 12px;
+      padding: 8px;
+    }
+  
+    .publishBtn, .editBtn, .deleteBtn {
+      padding: 5px;
+      font-size: 12px;
+    }
+  }
+  

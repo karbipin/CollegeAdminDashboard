@@ -12,6 +12,10 @@ import Notes from './pages/Notes';
 import Login from './Login';
 import AdmissionsTable from './pages/AdmissionsTable';
 import Skill from './pages/Skill';
+import CoursePage from './pages/Course';
+import SyllabusPage from './pages/Syllabus';
+import AdsPage from './pages/Ads';
+
 
 function App() {
   const [openSidebarToggle, setOpenSidebarToggle] = useState(false);
@@ -53,6 +57,10 @@ function App() {
                     <Route path="/notes" element={<Notes />} />
                     <Route path="/AdmissionsTable" element={<AdmissionsTable />} />
                     <Route path="/Skill" element={<Skill />} />
+                    <Route path="/CoursePage" element={<CoursePage />} />
+                    <Route path="/SyllabusPage" element={<SyllabusPage />} />
+                    <Route path="/CoursePage" element={<CoursePage />} />
+                    <Route path="/AdsPage" element={<AdsPage />} />
                   </Routes>
                 </main>
               </div>
