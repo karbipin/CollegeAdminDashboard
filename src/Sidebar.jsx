@@ -54,6 +54,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <HiSun className='icon' /> Admissions
           </NavLink>
         </li>
+
+        <li className='sidebar-list-item'>
+          <NavLink to="/EnrollmentRequestsTable" activeClassName="active">
+            <HiSun className='icon' /> Enrollment Requests
+          </NavLink>
+        </li>
         <li className='sidebar-list-item'>
           <NavLink to="/Skill" activeClassName="active">
             <HiCubeTransparent className='icon' /> Skill

@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
-import styles from "./css/AdmissionsTable.module.css"; // Import CSS Module 
+import axios from "axios";
+import styles from "./css/AdmissionsTable.module.css";
 
 const AdmissionsTable = () => {
   const [admissions, setAdmissions] = useState([]);
   const [statusFilter, setStatusFilter] = useState("All");
-  const [view, setView] = useState("table"); // Toggle between "table" and "form"
+  const [view, setView] = useState("table");
 
-  // Fetch admissions from API
+  // Fetch admissions using Axios
   useEffect(() => {
-    fetch("http://localhost:5000/api/admissions") // Replace with your API URL
-      .then((response) => response.json())
-      .then((data) => setAdmissions(data))
-      .catch((error) => console.error("Error fetching admissions:", error));
+    axios
+      .get("http://localhost:5000/api/admissions")
+      .then((response) => {
+        setAdmissions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching admissions:", error);
+      });
   }, []);
 
-  // Filter admissions by status
   const filteredAdmissions =
     statusFilter === "All"
       ? admissions
       : admissions.filter((admission) => admission.status === statusFilter);
 
-  // Handle form submission
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const newAdmission = {
       course_name: e.target.course.value,
@@ -30,24 +33,27 @@ const AdmissionsTable = () => {
       application_start: e.target.startDate.value,
       application_end: e.target.endDate.value,
     };
-    setAdmissions([...admissions, newAdmission]); // Add new admission to list
-    setView("table"); // Switch back to table view
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/admissions", newAdmission);
+      setAdmissions([...admissions, response.data]); // Assuming API returns the created object
+      setView("table");
+    } catch (error) {
+      console.error("Error adding admission:", error);
+      alert("Failed to add admission.");
+    }
   };
 
   return (
     <div className={styles.container}>
-      {/* Navigation Bar */}
       <div className={styles.navBar}>
         <button onClick={() => setView("table")}>Admissions</button>
         <button onClick={() => setView("form")}>Add Admission</button>
       </div>
 
-      {/* Table View */}
       {view === "table" && (
         <>
           <h2>Admissions Management</h2>
-
-          {/* Filter Dropdown */}
           <div className={styles.filterContainer}>
             <label>Status Filter: </label>
             <select onChange={(e) => setStatusFilter(e.target.value)}>
@@ -58,7 +64,6 @@ const AdmissionsTable = () => {
             </select>
           </div>
 
-          {/* Admissions Table */}
           <table className={styles.admissionsTable}>
             <thead>
               <tr>
@@ -97,7 +102,6 @@ const AdmissionsTable = () => {
         </>
       )}
 
-      {/* Form View */}
       {view === "form" && (
         <div className={styles.formContainer}>
           <h2>Add New Admission</h2>

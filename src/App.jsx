@@ -15,6 +15,7 @@ import Skill from './pages/Skill';
 import CoursePage from './pages/Course';
 import SyllabusPage from './pages/Syllabus';
 import AdsPage from './pages/Ads';
+import EnrollmentRequestsTable from './pages/EnrollmentRequestsTable';
 
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/notes" element={<Notes />} />
                     <Route path="/AdmissionsTable" element={<AdmissionsTable />} />
+                    <Route path="/EnrollmentRequestsTable" element={<EnrollmentRequestsTable />} />
                     <Route path="/Skill" element={<Skill />} />
                     <Route path="/CoursePage" element={<CoursePage />} />
                     <Route path="/SyllabusPage" element={<SyllabusPage />} />
