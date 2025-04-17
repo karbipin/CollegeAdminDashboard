@@ -21,21 +21,21 @@ function Home() {
                     <h3>COLLEGES</h3>
                     <BsFillArchiveFill className='card_icon'/>
                 </div>
-                <h1>300</h1>
+                <h1>0</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
                     <h3>NOTES</h3>
                     <BsFillGrid3X3GapFill className='card_icon'/>
                 </div>
-                <h1>12</h1>
+                <h1>0</h1>
             </div>
             <div className='card'>
                 <div className='card-inner'>
                     <h3>USERS</h3>
                     <BsPeopleFill className='card_icon'/>
                 </div>
-                <h1>33</h1>
+                <h1>0</h1>
             </div>
         </div>
 

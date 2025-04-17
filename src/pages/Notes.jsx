@@ -1,20 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 function Notes() {
-  const [view, setView] = useState("manage"); // Default is "manage"
+  const [view, setView] = useState("manage");
   const [currentNote, setCurrentNote] = useState(null);
-  const [file, setFile] = useState(null); // For storing the selected file
-  const [notes, setNotes] = useState([]); // Example notes data
+  const [file, setFile] = useState(null);
+  const [notes, setNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedAffiliation, setSelectedAffiliation] = useState("");
+
+  // Fetch notes on component mount
+  useEffect(() => {
+    fetchNotes();
+  }, []);
+
+  const fetchNotes = async () => {
+    try {
+      const res = await axios.get("/api/notes");
+      setNotes(res.data);
+    } catch (error) {
+      console.error("Error fetching notes:", error);
+    }
+  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
 
-  const handleDelete = (id) => {
-    setNotes(notes.filter((note) => note.id !== id));
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`/api/notes/${id}`);
+      setNotes(notes.filter((note) => note.id !== id));
+    } catch (error) {
+      console.error("Error deleting note:", error);
+    }
   };
 
   const handleEdit = (id) => {
@@ -24,23 +44,39 @@ function Notes() {
     setView("add");
   };
 
-  const handleAddOrUpdateNote = (noteData) => {
-    if (currentNote) {
-      const updatedNotes = notes.map((note) =>
-        note.id === currentNote.id ? { ...note, ...noteData } : note
-      );
-      setNotes(updatedNotes);
-    } else {
-      const newNote = { id: notes.length + 1, ...noteData, createdAt: new Date() };
-      setNotes([newNote, ...notes]);
+  const handleAddOrUpdateNote = async (noteData) => {
+    try {
+      if (file) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("note", noteData.note);
+        formData.append("affiliation", noteData.affiliation);
+
+        if (currentNote) {
+          await axios.put(`/api/notes/${currentNote.id}`, formData);
+        } else {
+          await axios.post("/api/notes", formData);
+        }
+      } else {
+        if (currentNote) {
+          await axios.put(`/api/notes/${currentNote.id}`, noteData);
+        } else {
+          await axios.post("/api/notes", noteData);
+        }
+      }
+
+      fetchNotes(); // Refresh notes
+      setCurrentNote(null);
+      setFile(null);
+      setSelectedAffiliation("");
+      setView("manage");
+    } catch (error) {
+      console.error("Error saving note:", error);
     }
-    setCurrentNote(null);
-    setFile(null);
-    setSelectedAffiliation("");
-    setView("manage");
   };
 
   const handleNavigation = (view) => {
+    setSearchTerm("");
     setView(view);
   };
 
@@ -65,7 +101,6 @@ function Notes() {
       {view === "manage" && (
         <div>
           <h4>Manage Notes</h4>
-
           <div className="search-container">
             <input
               type="text"
@@ -93,8 +128,8 @@ function Notes() {
                     <td>{note.note}</td>
                     <td>{note.affiliation}</td>
                     <td>
-                      <a href={`/${note.document}`} target="_blank" rel="noopener noreferrer">
-                        {note.document || "No File"}
+                      <a href={note.document} target="_blank" rel="noopener noreferrer">
+                        {note.document ? "View File" : "No File"}
                       </a>
                     </td>
                     <td>
@@ -119,19 +154,18 @@ function Notes() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const documentName = file ? file.name : "";
-              handleAddOrUpdateNote({
+              const noteData = {
                 note: e.target.note.value,
                 affiliation: selectedAffiliation,
-                document: documentName,
-              });
+              };
+              handleAddOrUpdateNote(noteData);
             }}
           >
             <label>Note:</label>
             <input
               type="text"
               name="note"
-              defaultValue={currentNote ? currentNote.note : ""}
+              defaultValue={currentNote?.note || ""}
               required
             />
 
@@ -148,7 +182,12 @@ function Notes() {
             </select>
 
             <label>Document (PDF):</label>
-            <input type="file" name="document" accept="application/pdf" onChange={handleFileChange} />
+            <input
+              type="file"
+              name="document"
+              accept="application/pdf"
+              onChange={handleFileChange}
+            />
 
             <button type="submit">{currentNote ? "Update Note" : "Add Note"}</button>
           </form>
@@ -177,11 +216,11 @@ function Notes() {
                     <td>{note.note}</td>
                     <td>{note.affiliation}</td>
                     <td>
-                      <a href={`/${note.document}`} target="_blank" rel="noopener noreferrer">
-                        {note.document || "No File"}
+                      <a href={note.document} target="_blank" rel="noopener noreferrer">
+                        {note.document ? "View File" : "No File"}
                       </a>
                     </td>
-                    <td>{note.createdAt.toLocaleDateString()}</td>
+                    <td>{new Date(note.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))
               ) : (

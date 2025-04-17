@@ -1,41 +1,67 @@
-import React, { useState } from "react";
-import styles from "./css/Settings.module.css"; // Import CSS module
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import styles from "./css/Settings.module.css";
 
 function Settings() {
   const [view, setView] = useState("manage");
   const [exams, setExams] = useState([]);
   const [currentExam, setCurrentExam] = useState(null);
 
+  // Fetch exams on component mount
+  useEffect(() => {
+    axios.get("http://localhost:5000/api/exams")
+      .then(res => setExams(res.data))
+      .catch(err => console.error("Error fetching exams:", err));
+  }, []);
+
   const handleNavigation = (view) => setView(view);
-  const handleDelete = (id) => setExams(exams.filter((exam) => exam.id !== id));
+
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/exams/${id}`);
+      setExams(exams.filter((exam) => exam.id !== id));
+    } catch (error) {
+      console.error("Error deleting exam:", error);
+    }
+  };
+
   const handleEdit = (id) => {
-    setCurrentExam(exams.find((exam) => exam.id === id));
+    const exam = exams.find((exam) => exam.id === id);
+    setCurrentExam(exam);
     setView("add");
   };
-  const handlePublish = (id) => alert(`Exam ID ${id} published!`);
 
-  const handleAddOrUpdateExam = (examData) => {
-    if (currentExam) {
-      setExams(exams.map((exam) => (exam.id === currentExam.id ? { ...exam, ...examData } : exam)));
-    } else {
-      setExams([...exams, { id: exams.length + 1, ...examData }]);
+  const handlePublish = (id) => {
+    alert(`Exam ID ${id} published!`);
+    // You can also make an API call here if needed
+  };
+
+  const handleAddOrUpdateExam = async (examData) => {
+    try {
+      if (currentExam) {
+        const res = await axios.put(`http://localhost:5000/api/exams/${currentExam.id}`, examData);
+        setExams(exams.map((exam) => (exam.id === currentExam.id ? res.data : exam)));
+      } else {
+        const res = await axios.post("http://localhost:5000/api/exams", examData);
+        setExams([...exams, res.data]);
+      }
+      setCurrentExam(null);
+      setView("manage");
+    } catch (error) {
+      console.error("Error saving exam:", error);
     }
-    setCurrentExam(null);
-    setView("manage");
   };
 
   return (
     <main className={styles.mainContainer}>
       <h3>Exam Page</h3>
 
-      {/* Navigation Bar */}
       <div className={styles.navBar}>
         <button onClick={() => handleNavigation("manage")}>Manage Exam</button>
         <button onClick={() => handleNavigation("add")}>Add Exam</button>
         <button onClick={() => handleNavigation("recent")}>Recent Exams</button>
       </div>
 
-      {/* Manage Exams Section */}
       {view === "manage" && (
         <div>
           <h4>Manage Exams</h4>
@@ -73,16 +99,13 @@ function Settings() {
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan="6">No exams available</td>
-                </tr>
+                <tr><td colSpan="6">No exams available</td></tr>
               )}
             </tbody>
           </table>
         </div>
       )}
 
-      {/* Add Exam Section */}
       {view === "add" && (
         <div>
           <h4>{currentExam ? "Edit Exam" : "Add New Exam"}</h4>
@@ -119,7 +142,6 @@ function Settings() {
         </div>
       )}
 
-      {/* Recent Exams Section */}
       {view === "recent" && (
         <div>
           <h4>Recent Exams</h4>
@@ -149,9 +171,7 @@ function Settings() {
                   </tr>
                 ))
               ) : (
-                <tr>
-                  <td colSpan="4">No recent exams</td>
-                </tr>
+                <tr><td colSpan="4">No recent exams</td></tr>
               )}
             </tbody>
           </table>

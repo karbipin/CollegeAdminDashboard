@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Skill = () => {
   const [skills, setSkills] = useState([]);
-  const [view, setView] = useState("manage"); // Default view is "manage"
+  const [view, setView] = useState("manage");
   const [newSkill, setNewSkill] = useState({ name: "", description: "", startDate: "", endDate: "" });
-  const [editSkill, setEditSkill] = useState(null); // Store skill being edited
+  const [editSkill, setEditSkill] = useState(null);
 
   // Fetch skills from API
   useEffect(() => {
-    fetch("http://localhost:5000/api/skills") // Replace with actual API
-      .then((response) => response.json())
-      .then((data) => setSkills(data))
+    axios.get("http://localhost:5000/api/skills")
+      .then((response) => setSkills(response.data))
       .catch((error) => console.error("Error fetching skills:", error));
   }, []);
 
   // Handle Delete
   const handleDelete = (skillId) => {
     if (window.confirm("Are you sure you want to delete this skill?")) {
-      fetch(`http://localhost:5000/api/skills/${skillId}`, { method: "DELETE" })
-        .then(() => setSkills(skills.filter(skill => skill.skill_id !== skillId)))
+      axios.delete(`http://localhost:5000/api/skills/${skillId}`)
+        .then(() => {
+          setSkills(skills.filter(skill => skill.skill_id !== skillId));
+        })
         .catch((error) => console.error("Error deleting skill:", error));
     }
   };
@@ -29,11 +31,7 @@ const Skill = () => {
 
     if (editSkill) {
       // Update Skill
-      fetch(`http://localhost:5000/api/skills/${editSkill.skill_id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newSkill),
-      })
+      axios.put(`http://localhost:5000/api/skills/${editSkill.skill_id}`, newSkill)
         .then(() => {
           setSkills(skills.map(skill => (skill.skill_id === editSkill.skill_id ? newSkill : skill)));
           setEditSkill(null);
@@ -42,14 +40,9 @@ const Skill = () => {
         .catch((error) => console.error("Error updating skill:", error));
     } else {
       // Add New Skill
-      fetch("http://localhost:5000/api/skills", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newSkill),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setSkills([data, ...skills]);
+      axios.post("http://localhost:5000/api/skills", newSkill)
+        .then((response) => {
+          setSkills([response.data, ...skills]);
           setView("manage");
         })
         .catch((error) => console.error("Error adding skill:", error));
