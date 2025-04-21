@@ -1,21 +1,33 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import {
+  fetchAds,
+  createAd,
+  updateAd,
+  deleteAd,
+  fetchAdById,
+} from "../services/api"; // Adjust the path as needed
 import styles from "./css/AdsPage.module.css";
 
 export default function AdsPage() {
   const [adsList, setAdsList] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ title: "", banner: null, position: "horizontal_1", banner_url: "" });
-  const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingAdId, setEditingAdId] = useState(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    banner: null,
+    position: "horizontal_1",
+    banner_url: "",
+    status: "active",
+  });
 
   useEffect(() => {
-    fetchAds();
+    loadAds();
   }, []);
 
-  const fetchAds = async () => {
+  const loadAds = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/ads");
+      const response = await fetchAds();
       setAdsList(response.data);
     } catch (error) {
       console.error("Error fetching ads:", error);
@@ -24,10 +36,41 @@ export default function AdsPage() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/ads/${id}`);
-      fetchAds();
+      await deleteAd(id);
+      loadAds();
     } catch (error) {
       console.error("Error deleting ad:", error);
+    }
+  };
+
+  const handleEdit = async (id) => {
+    try {
+      const response = await fetchAdById(id);
+      const ad = response.data;
+      setFormData({
+        title: ad.title,
+        banner: null, // image not prefilled
+        position: ad.position,
+        banner_url: ad.banner_url,
+        status: ad.status || "active",
+      });
+      setEditingAdId(id);
+      setIsEditing(true);
+      setShowForm(true);
+    } catch (error) {
+      console.error("Error loading ad for edit:", error);
+    }
+  };
+
+  const handleToggleStatus = async (id, currentStatus) => {
+    try {
+      const updatedStatus = currentStatus === "active" ? "inactive" : "active";
+      const form = new FormData();
+      form.append("status", updatedStatus);
+      await updateAd(id, form);
+      loadAds();
+    } catch (error) {
+      console.error("Error toggling ad status:", error);
     }
   };
 
@@ -35,28 +78,62 @@ export default function AdsPage() {
     e.preventDefault();
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
-    formDataToSend.append("banner", formData.banner);
+    if (formData.banner) {
+      formDataToSend.append("banner", formData.banner);
+    }
     formDataToSend.append("position", formData.position);
     formDataToSend.append("banner_url", formData.banner_url);
-    
+    formDataToSend.append("status", formData.status);
+
     try {
-      await axios.post("http://localhost:5000/ads", formDataToSend, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      if (isEditing) {
+        await updateAd(editingAdId, formDataToSend);
+      } else {
+        await createAd(formDataToSend);
+      }
       setShowForm(false);
-      fetchAds();
+      setIsEditing(false);
+      setEditingAdId(null);
+      setFormData({
+        title: "",
+        banner: null,
+        position: "horizontal_1",
+        banner_url: "",
+        status: "active",
+      });
+      loadAds();
     } catch (error) {
-      console.error("Error adding ad:", error);
+      console.error("Error saving ad:", error);
     }
   };
 
   return (
     <div className={styles.container}>
       <nav className={styles.navbar}>
-        <button onClick={() => setShowForm(false)}>Ads</button>
-        <button onClick={() => setShowForm(true)}>Add Ad</button>
+        <button onClick={() => {
+          setShowForm(false);
+          setIsEditing(false);
+          setFormData({
+            title: "",
+            banner: null,
+            position: "horizontal_1",
+            banner_url: "",
+            status: "active",
+          });
+        }}>Ads</button>
+        <button onClick={() => {
+          setShowForm(true);
+          setIsEditing(false);
+          setFormData({
+            title: "",
+            banner: null,
+            position: "horizontal_1",
+            banner_url: "",
+            status: "active",
+          });
+        }}>Add Ad</button>
       </nav>
-      
+
       {!showForm ? (
         <table className={styles.table}>
           <thead>
@@ -66,6 +143,7 @@ export default function AdsPage() {
               <th>Banner</th>
               <th>Position</th>
               <th>URL</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -75,12 +153,28 @@ export default function AdsPage() {
                 <td>{ad.ad_id}</td>
                 <td>{ad.title}</td>
                 <td>
-                  <img src={`http://localhost:5000/uploads/${ad.banner}`} alt="Ad Banner" className={styles.banner} />
+                  <img
+                    src={`http://localhost:5000/uploads/${ad.banner}`}
+                    alt="Ad Banner"
+                    className={styles.banner}
+                  />
                 </td>
                 <td>{ad.position}</td>
-                <td><a href={ad.banner_url} target="_blank" rel="noopener noreferrer">Visit</a></td>
                 <td>
-                  <button onClick={() => navigate(`/edit/${ad.ad_id}`)}>Edit</button>
+                  <a href={ad.banner_url} target="_blank" rel="noopener noreferrer">
+                    Visit
+                  </a>
+                </td>
+                <td>
+                  <button
+                    onClick={() => handleToggleStatus(ad.ad_id, ad.status)}
+                    className={ad.status === "active" ? styles.active : styles.inactive}
+                  >
+                    {ad.status === "active" ? "Deactivate" : "Activate"}
+                  </button>
+                </td>
+                <td>
+                  <button onClick={() => handleEdit(ad.ad_id)}>Edit</button>
                   <button onClick={() => handleDelete(ad.ad_id)} className={styles.deleteButton}>Delete</button>
                 </td>
               </tr>
@@ -100,7 +194,6 @@ export default function AdsPage() {
             type="file"
             accept="image/*"
             onChange={(e) => setFormData({ ...formData, banner: e.target.files[0] })}
-            required
           />
           <select
             value={formData.position}
@@ -122,7 +215,14 @@ export default function AdsPage() {
             onChange={(e) => setFormData({ ...formData, banner_url: e.target.value })}
             required
           />
-          <button type="submit">Add Ad</button>
+          <select
+            value={formData.status}
+            onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+          >
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          <button type="submit">{isEditing ? "Update Ad" : "Add Ad"}</button>
         </form>
       )}
     </div>

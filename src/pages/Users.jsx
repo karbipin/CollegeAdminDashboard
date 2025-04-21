@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import './css/Users.css'
+import { fetchUsers } from "../services/api"; // Adjust the path based on your project structure
+import './css/Users.css';
 
 const UserTable = () => {
   const [users, setUsers] = useState([]);
@@ -7,21 +8,25 @@ const UserTable = () => {
 
   // Fetch user data from API
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/users")
-      .then((response) => response.json())
-      .then((data) => {
-        const formattedData = data.map(user => ({
-          id: user.id,
-          username: user.username,
-          email: user.email,
-          phone: user.phone,
-          location: user.address.city,
-          role: "User"
-        }));
-        setUsers(formattedData);
-      })
-      .catch((error) => console.error("Error fetching users:", error));
+    loadUsers();
   }, []);
+
+  const loadUsers = async () => {
+    try {
+      const response = await fetchUsers();
+      const formattedData = response.data.map(user => ({
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        location: user.location || "Unknown", // fallback if no address
+        role: user.role || "User", // fallback role
+      }));
+      setUsers(formattedData);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
+  };
 
   // Get unique locations for the dropdown filter
   const locations = ["All", ...new Set(users.map(user => user.location))];
@@ -35,7 +40,7 @@ const UserTable = () => {
     <div className="table-container">
       <h2>User Information</h2>
 
-       {/* Filter Dropdown  */}
+      {/* Filter Dropdown  */}
       <div className="filter-container">
         <label>Filter by Location: </label>
         <select onChange={(e) => setSelectedCity(e.target.value)}>
@@ -59,9 +64,9 @@ const UserTable = () => {
         </thead>
         <tbody>
           {filteredUsers.length > 0 ? (
-            filteredUsers.map((user) => (
+            filteredUsers.map((user, index) => (
               <tr key={user.id}>
-                <td>{user.id}</td>
+                <td>{index + 1}</td>
                 <td>{user.username}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
@@ -71,7 +76,7 @@ const UserTable = () => {
             ))
           ) : (
             <tr>
-              <td colSpan="5">No users found</td>
+              <td colSpan="6">No users found</td>
             </tr>
           )}
         </tbody>

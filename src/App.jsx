@@ -3,19 +3,17 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import './App.css';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import Colleges from './pages/Colleges';
-import AddColleges from './pages/AddColleges';
 import Users from './pages/Users';
-import Settings from './pages/Settings';
 import Home from './pages/Home';
 import Notes from './pages/Notes';
 import Login from './Login';
-import AdmissionsTable from './pages/AdmissionsTable';
-import Skill from './pages/Skill';
+import Admission from './pages/Admission';
+import Training from './pages/Training';
 import CoursePage from './pages/Course';
 import SyllabusPage from './pages/Syllabus';
 import AdsPage from './pages/Ads';
 import EnrollmentRequestsTable from './pages/EnrollmentRequestsTable';
+import College from './pages/College';
 
 
 function App() {
@@ -51,14 +49,12 @@ function App() {
                 <main className='main-content'>
                   <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/colleges" element={<Colleges />} />
-                    <Route path="/add-colleges" element={<AddColleges />} />
+                    <Route path="/college" element={<College />} />
                     <Route path="/users" element={<Users />} />
-                    <Route path="/settings" element={<Settings />} />
                     <Route path="/notes" element={<Notes />} />
-                    <Route path="/AdmissionsTable" element={<AdmissionsTable />} />
+                    <Route path="/Admission" element={<Admission />} />
                     <Route path="/EnrollmentRequestsTable" element={<EnrollmentRequestsTable />} />
-                    <Route path="/Skill" element={<Skill />} />
+                    <Route path="/Training" element={<Training />} />
                     <Route path="/CoursePage" element={<CoursePage />} />
                     <Route path="/SyllabusPage" element={<SyllabusPage />} />
                     <Route path="/CoursePage" element={<CoursePage />} />
