@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import {
+  createNote,
+  fetchNotes,
+  updateNote,
+  deleteNote,
+  fetchRecentNotes
+} from "../services/api"; // Adjust path to your api.js
+import "../pages/css/common.css";
 
 function Notes() {
   const [view, setView] = useState("manage");
@@ -7,16 +14,15 @@ function Notes() {
   const [file, setFile] = useState(null);
   const [notes, setNotes] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedAffiliation, setSelectedAffiliation] = useState("");
+  const [description, setDescription] = useState("");
 
-  // Fetch notes on component mount
   useEffect(() => {
-    fetchNotes();
+    loadNotes();
   }, []);
 
-  const fetchNotes = async () => {
+  const loadNotes = async () => {
     try {
-      const res = await axios.get("/api/notes");
+      const res = await fetchNotes();
       setNotes(res.data);
     } catch (error) {
       console.error("Error fetching notes:", error);
@@ -30,7 +36,7 @@ function Notes() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`/api/notes/${id}`);
+      await deleteNote(id);
       setNotes(notes.filter((note) => note.id !== id));
     } catch (error) {
       console.error("Error deleting note:", error);
@@ -40,44 +46,46 @@ function Notes() {
   const handleEdit = (id) => {
     const noteToEdit = notes.find((note) => note.id === id);
     setCurrentNote(noteToEdit);
-    setSelectedAffiliation(noteToEdit.affiliation);
+    setDescription(noteToEdit.description || "");
     setView("add");
   };
 
   const handleAddOrUpdateNote = async (noteData) => {
     try {
+      const formData = new FormData();
+      formData.append("note", noteData.note);
+      formData.append("description", noteData.description);
       if (file) {
-        const formData = new FormData();
         formData.append("file", file);
-        formData.append("note", noteData.note);
-        formData.append("affiliation", noteData.affiliation);
-
-        if (currentNote) {
-          await axios.put(`/api/notes/${currentNote.id}`, formData);
-        } else {
-          await axios.post("/api/notes", formData);
-        }
-      } else {
-        if (currentNote) {
-          await axios.put(`/api/notes/${currentNote.id}`, noteData);
-        } else {
-          await axios.post("/api/notes", noteData);
-        }
       }
 
-      fetchNotes(); // Refresh notes
+      if (currentNote) {
+        await updateNote(currentNote.id, formData);
+      } else {
+        await createNote(formData);
+      }
+
+      await loadNotes();
       setCurrentNote(null);
       setFile(null);
-      setSelectedAffiliation("");
+      setDescription("");
       setView("manage");
     } catch (error) {
       console.error("Error saving note:", error);
     }
   };
 
-  const handleNavigation = (view) => {
+  const handleNavigation = (targetView) => {
     setSearchTerm("");
-    setView(view);
+    setView(targetView);
+
+    if (targetView === "recent") {
+      fetchRecentNotes()
+        .then((res) => setNotes(res.data))
+        .catch((err) => console.error("Error loading recent notes:", err));
+    } else {
+      loadNotes();
+    }
   };
 
   const filteredNotes = notes.filter((note) =>
@@ -115,7 +123,7 @@ function Notes() {
               <tr>
                 <th>SN</th>
                 <th>Note</th>
-                <th>Affiliation</th>
+                <th>Description</th>
                 <th>Document</th>
                 <th>Actions</th>
               </tr>
@@ -126,7 +134,7 @@ function Notes() {
                   <tr key={note.id}>
                     <td>{index + 1}</td>
                     <td>{note.note}</td>
-                    <td>{note.affiliation}</td>
+                    <td>{note.description}</td>
                     <td>
                       <a href={note.document} target="_blank" rel="noopener noreferrer">
                         {note.document ? "View File" : "No File"}
@@ -156,7 +164,7 @@ function Notes() {
               e.preventDefault();
               const noteData = {
                 note: e.target.note.value,
-                affiliation: selectedAffiliation,
+                description: description,
               };
               handleAddOrUpdateNote(noteData);
             }}
@@ -169,17 +177,14 @@ function Notes() {
               required
             />
 
-            <label>Affiliation:</label>
-            <select
-              name="affiliation"
-              value={selectedAffiliation}
-              onChange={(e) => setSelectedAffiliation(e.target.value)}
+            <label>Description:</label>
+            <textarea
+              name="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={4}
               required
-            >
-              <option value="">Select Affiliation</option>
-              <option value="PU">PU</option>
-              <option value="TU">TU</option>
-            </select>
+            ></textarea>
 
             <label>Document (PDF):</label>
             <input
@@ -197,13 +202,12 @@ function Notes() {
       {view === "recent" && (
         <div>
           <h4>Recent Notes</h4>
-
           <table className="notes-table">
             <thead>
               <tr>
                 <th>SN</th>
                 <th>Note</th>
-                <th>Affiliation</th>
+                <th>Description</th>
                 <th>Document</th>
                 <th>Added On</th>
               </tr>
@@ -214,7 +218,7 @@ function Notes() {
                   <tr key={note.id}>
                     <td>{index + 1}</td>
                     <td>{note.note}</td>
-                    <td>{note.affiliation}</td>
+                    <td>{note.description}</td>
                     <td>
                       <a href={note.document} target="_blank" rel="noopener noreferrer">
                         {note.document ? "View File" : "No File"}

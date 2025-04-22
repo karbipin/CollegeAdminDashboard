@@ -22,25 +22,20 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </NavLink>
         </li>
         <li className='sidebar-list-item'>
-          <NavLink to="/colleges" activeClassName="active">
-            <HiAcademicCap className='icon' /> Colleges
+          <NavLink to="/college" activeClassName="active">
+            <HiAcademicCap className='icon' /> College
           </NavLink>
         </li>
-        <li className='sidebar-list-item'>
-          <NavLink to="/add-colleges" activeClassName="active">
-            <BsFillGrid3X3GapFill className='icon' /> Add Colleges
-          </NavLink>
-        </li>
-        <li className='sidebar-list-item'>
+         <li className='sidebar-list-item'>
           <NavLink to="/users" activeClassName="active">
             <BsPeopleFill className='icon' /> Users
           </NavLink>
         </li>
-        <li className='sidebar-list-item'>
+        {/* <li className='sidebar-list-item'>
           <NavLink to="/Settings" activeClassName="active">
             <HiClipboardList className='icon' /> Exam
           </NavLink>
-        </li>
+        </li> */}
 
 
         {/* try */}
@@ -50,19 +45,25 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
           </NavLink>
         </li>
         <li className='sidebar-list-item'>
-          <NavLink to="/AdmissionsTable" activeClassName="active">
+          <NavLink to="/Admission" activeClassName="active">
             <HiSun className='icon' /> Admissions
           </NavLink>
         </li>
 
+        <li className='sidebar-list-item'>
+          <NavLink to="/AdmissionApplicationsTable" activeClassName="active">
+            <HiSun className='icon' /> Admission Applications
+          </NavLink>
+        </li>
+        
         <li className='sidebar-list-item'>
           <NavLink to="/EnrollmentRequestsTable" activeClassName="active">
             <HiSun className='icon' /> Enrollment Requests
           </NavLink>
         </li>
         <li className='sidebar-list-item'>
-          <NavLink to="/Skill" activeClassName="active">
-            <HiCubeTransparent className='icon' /> Skill
+          <NavLink to="/Training" activeClassName="active">
+            <HiCubeTransparent className='icon' /> Training
           </NavLink>
         </li>
         <li className='sidebar-list-item'>

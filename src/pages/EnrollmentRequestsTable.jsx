@@ -1,40 +1,54 @@
+// src/pages/EnrollmentRequestsTable.jsx
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchEnrollments } from "../services/api"; // Update path as needed
 
 const EnrollmentRequestsTable = () => {
-  const [requests, setRequests] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/enrollment-requests")
-      .then((response) => setRequests(response.data))
-      .catch((error) => console.error("Error fetching enrollment requests:", error));
+    loadEnrollments();
   }, []);
 
+  const loadEnrollments = async () => {
+    try {
+      const response = await fetchEnrollments();
+      setEnrollments(response.data);
+    } catch (error) {
+      console.error("Error fetching enrollments:", error);
+    }
+  };
+
   return (
-    <div>
-      <h2>Enrolled Students</h2>
-      <table border="1" cellPadding="10" cellSpacing="0">
+    <div style={{ padding: "20px" }}>
+      <h2>Enrollment Requests</h2>
+      <table border="1" cellPadding="10" cellSpacing="0" style={{ width: "100%", borderCollapse: "collapse" }}>
         <thead>
           <tr>
             <th>SN</th>
             <th>Full Name</th>
             <th>Contact</th>
             <th>Email</th>
+            <th>Request Date</th>
+            <th>Admin ID</th>
           </tr>
         </thead>
         <tbody>
-          {requests.length > 0 ? (
-            requests.map((req, index) => (
+          {enrollments.length > 0 ? (
+            enrollments.map((req, index) => (
               <tr key={req.request_id}>
                 <td>{index + 1}</td>
                 <td>{req.fullname}</td>
                 <td>{req.contact}</td>
                 <td>{req.email}</td>
+                <td>{new Date(req.request_date).toLocaleString()}</td>
+                <td>{req.admin_id ?? "N/A"}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4">No students enrolled yet.</td>
+              <td colSpan="6" style={{ textAlign: "center" }}>
+                No enrollment requests found.
+              </td>
             </tr>
           )}
         </tbody>
