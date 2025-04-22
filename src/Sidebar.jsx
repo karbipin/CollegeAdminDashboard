@@ -49,12 +49,12 @@ function Sidebar({ openSidebarToggle, OpenSidebar }) {
             <HiSun className='icon' /> Admissions
           </NavLink>
         </li>
-{/* 
+
         <li className='sidebar-list-item'>
           <NavLink to="/AdmissionApplicationsTable" activeClassName="active">
             <HiSun className='icon' /> Admission Applications
           </NavLink>
-        </li> */}
+        </li>
         
         <li className='sidebar-list-item'>
           <NavLink to="/EnrollmentRequestsTable" activeClassName="active">

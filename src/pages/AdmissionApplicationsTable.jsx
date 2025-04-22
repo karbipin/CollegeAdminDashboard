@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { fetchApplications } from "../services/api"; // Update the path as per your folder structure
+import { fetchApplications } from "../services/api";  
+import "../pages/css/common.css"; 
 
 const AdmissionApplicationsTable = () => {
   const [applications, setApplications] = useState([]);
