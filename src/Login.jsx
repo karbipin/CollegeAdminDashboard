@@ -10,7 +10,8 @@ function Login({ setIsAuthenticated }) {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    if (credentials.username === "admin" && credentials.password === "1234") {
+    if (credentials.username === "bipin" && credentials.password === "1234") {
+      
       localStorage.setItem("user", JSON.stringify(credentials));
       setIsAuthenticated(true);
       navigate("/");
